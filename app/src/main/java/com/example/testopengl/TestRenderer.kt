@@ -18,6 +18,10 @@ class TestRenderer(private val context: Context) : GLSurfaceView.Renderer {
         0.5f, -0.5f, 0.0f
     )
 
+    private val indices = intBufferOf(
+        0, 1, 2
+    )
+
     private val vboId = intArrayOf(0)
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -55,7 +59,9 @@ class TestRenderer(private val context: Context) : GLSurfaceView.Renderer {
         // program 활성화
         runGL { GLES30.glUseProgram(programId) }
         //draw
-        runGL { GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3) }
+        // 이건 vbo에 정의된 버텍스로 그리는 방법임 -> 버텍스 갯수가 많아 버퍼의 갯수를 많이 차지하기 때문에 ibo 방식으로 인덱스로 전달하는게 좋음
+        //runGL { GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, 3) }
+        runGL { GLES30.glDrawElements(GLES30.GL_TRIANGLES, 3, GLES30.GL_UNSIGNED_INT, indices) }
 
         runGL { GLES30.glDisableVertexAttribArray(0) }
         // 프로그램 종료
